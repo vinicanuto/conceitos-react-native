@@ -14,17 +14,18 @@ export default function App() {
   const [repositories, setRepositories] = useState([]);
 
   useEffect(() => {
-    async function getRepositories() {
-      const { data } = await api.get("/repositories");
 
-      setRepositories(data);
-    }
+      api.get("repositories").then(({data}) =>{
+        console.log(data);
+        setRepositories(data);
+      }
+      )
 
-    getRepositories();
-  }, [repositories]);
+      
+  }, []);
 
    async function handleLikeRepository(id) {
-    const { data } = await api.post(`/repositories/${id}/like`);
+    const { data } = await api.post(`repositories/${id}/like`);
     const updateRopositories = repositories.map((repository) =>
       repository.id === id ? data : repository
     );
@@ -38,18 +39,18 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <SafeAreaView style={styles.container}>
         <View style={styles.repositoryContainer}>
-        <FlatList 
-          data={repositories}
-          keyExtractor={repository => repository.id}
-          renderItem={({item: repository}) => {
-          <>  
-            <Text style={styles.repository}>{repository.title}</Text>
-            {repository.techs? (
-              <View style={styles.techsContainer}>
-                  {repository.techs.map(tech => <Text key={tech}style={styles.tech}>{tech}</Text>)}
-              </View>
-            ) : null }
-            <View style={styles.likesContainer}>
+          <FlatList 
+            data={repositories}
+            keyExtractor={repository => repository.id}
+            renderItem={({item: repository}) =>(
+              <>
+                <Text style={styles.repository}>{repository.title}</Text>
+                {repository.techs? (
+                <View style={styles.techsContainer}>
+                    {repository.techs.map(tech => <Text key={tech}style={styles.tech}>{tech}</Text>)}
+                </View>
+              ) : null }
+              <View style={styles.likesContainer}>
             <Text
               style={styles.likeText}
               // Remember to replace "1" below with repository ID: {`repository-likes-${repository.id}`}
@@ -67,10 +68,9 @@ export default function App() {
             >
               <Text style={styles.buttonText}>Curtir</Text>
             </TouchableOpacity>
-          </>
-          }}
-        />
-
+              </>
+            ) }
+          />
         </View>
       </SafeAreaView>
     </>
